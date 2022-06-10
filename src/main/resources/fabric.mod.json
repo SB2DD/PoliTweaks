@@ -18,7 +18,7 @@
     "PoliTweaks.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=",
-    "minecraft": ""
+    "fabricloader": ">=0.14",
+    "minecraft": "1.19.x"
   }
 }
