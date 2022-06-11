@@ -4,6 +4,10 @@
   "package": "me.polishkrowa.politweaks.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BlocksMixin",
+    "CauldronBlockMixin",
+    "DrownedEntityMixin",
+    "ServerWorldMixin",
     "TurtleEggBlockMixin",
     "VillagerTradesMixin",
     "ZombieVillagerEntityMixin"

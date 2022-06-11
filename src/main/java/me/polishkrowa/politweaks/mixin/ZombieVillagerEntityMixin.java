@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 @Mixin(ZombieVillagerEntity.class)
 public class ZombieVillagerEntityMixin {
 
-    // TODO: Test
     @ModifyVariable(method = "setConverting", at = @At(value = "HEAD"), argsOnly = true)
     private int injected(int i) {
         return 1;
