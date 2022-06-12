@@ -1,6 +1,8 @@
 package me.polishkrowa.politweaks;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,9 +12,8 @@ public class PolishTweaks implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        //TODO: Paper patches + NO VILLAGER CURE TIME, better msg plus, enchant extractor, milkit,
-        // structure compass, switch difficulty, xray enchant
-
+        //TODO: better msg plus, enchant extractor, milkit,
+        // structure compass, switch difficulty, xray enchant, list biomes/missing stuff in achievements command
 
 
 
