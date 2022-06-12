@@ -12,7 +12,7 @@ public class PolishTweaks implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        //TODO: better msg plus, enchant extractor, milkit,
+        //TODO: better msg plus, enchant extractor,
         // structure compass, switch difficulty, xray enchant, list biomes/missing stuff in achievements command
 
 
