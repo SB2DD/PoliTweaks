@@ -1,5 +1,6 @@
 package me.polishkrowa.politweaks;
 
+import me.polishkrowa.politweaks.commands.EnchantExtractorCommand;
 import me.polishkrowa.politweaks.commands.ReplyCommand;
 import me.polishkrowa.politweaks.commands.SwitchDifficultyCommand;
 import net.fabricmc.api.ModInitializer;
@@ -19,5 +20,6 @@ public class PolishTweaks implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> SwitchDifficultyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
+        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> EnchantExtractorCommand.registerCommand(dispatcher)));
     }
 }

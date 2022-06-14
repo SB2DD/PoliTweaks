@@ -30,7 +30,6 @@ public class ReplyCommand {
     private static int execute(ServerCommandSource source, MessageArgumentType.SignedMessage message) {
         message.decorate(source).thenAcceptAsync((decoratedMessage) -> {
             Text text = ((SignedMessage)decoratedMessage.raw()).getContent();
-            text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/"));
 
 
             ServerPlayerEntity serverPlayerEntity = lastMessaged.get(source.getPlayer());
