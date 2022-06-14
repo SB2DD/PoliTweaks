@@ -1,10 +1,10 @@
 package me.polishkrowa.politweaks;
 
+import me.polishkrowa.politweaks.commands.ReplyCommand;
 import me.polishkrowa.politweaks.commands.SwitchDifficultyCommand;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +14,10 @@ public class PolishTweaks implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        //TODO: better msg plus, enchant extractor,
+        //TODO: enchant extractor,
         // structure compass, xray enchant, list biomes/missing stuff in achievements command
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> SwitchDifficultyCommand.registerCommand(dispatcher)));
-
+        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
     }
 }
