@@ -2,21 +2,16 @@ package me.polishkrowa.politweaks;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.message.MessageType;
-import net.minecraft.server.command.EffectCommand;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -25,7 +20,7 @@ public class HandleRightClick {
 
     private static HashMap<UUID, Boolean> second = new HashMap<>();
 
-    public static void handleRightClick(ServerPlayerEntity player, Entity clickedEntity, Hand hand) {
+    public static void handleRightClickEntity(ServerPlayerEntity player, Entity clickedEntity, Hand hand) {
 //        System.out.println(player.getName() + "Rigjt clicked with " + hand.name());
         if (hand.equals(Hand.OFF_HAND)) return;
 

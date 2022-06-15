@@ -3,9 +3,9 @@ package me.polishkrowa.politweaks;
 import me.polishkrowa.politweaks.commands.EnchantExtractorCommand;
 import me.polishkrowa.politweaks.commands.ReplyCommand;
 import me.polishkrowa.politweaks.commands.SwitchDifficultyCommand;
+import me.polishkrowa.politweaks.commands.XrayEnchantCommand;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,5 +21,6 @@ public class PolishTweaks implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> SwitchDifficultyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> EnchantExtractorCommand.registerCommand(dispatcher)));
+        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> XrayEnchantCommand.registerCommand(dispatcher)));
     }
 }
