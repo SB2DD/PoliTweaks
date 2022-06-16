@@ -44,7 +44,7 @@ public class XrayEnchantCommand {
 
         AttackBlockCallback.EVENT.register((PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) -> {
             lastClicked.put(player.getUuid(), direction);
-            System.out.println("1");
+//            System.out.println("1");
             return ActionResult.PASS;
         });
 
@@ -52,7 +52,7 @@ public class XrayEnchantCommand {
             ServerPlayerEntity player = world.getServer().getPlayerManager().getPlayer(playerEnt.getUuid());
 
             if (hasEnchant(player.getInventory().getMainHandStack(), player) && lastClicked.containsKey(player.getUuid())) {
-                System.out.println("2");
+//                System.out.println("2");
                 //damage manager
 //                if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
 //                    ItemStack damageable = player.getInventory().getMainHandStack();
@@ -71,7 +71,7 @@ public class XrayEnchantCommand {
                 int count = 70;
                 int level = getEnchantLevel(player.getInventory().getMainHandStack().getTooltip(player, TooltipContext.Default.NORMAL));
 
-                for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && count > 0; blockPos = pos.offset(blockFace)) {
+                for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && count > 0; blockPos = blockPos.offset(blockFace.getOpposite())) {
                     for(int x = -(level / 2); x <= level / 2; ++x) {
                         for(int z = -(level / 2); z <= level / 2; ++z) {
                             if (level % 2 != 0 || Math.abs(x) != level / 2 || Math.abs(z) != level / 2) {
@@ -88,6 +88,7 @@ public class XrayEnchantCommand {
                                     newBlock = blockPos.add(x, 0, z);
                                 }
 
+//                                System.out.println(newBlock.toShortString());
 
                                 if (world.getBlockState(newBlock) != null) {
                                     Block type = world.getBlockState(newBlock).getBlock();
@@ -116,13 +117,13 @@ public class XrayEnchantCommand {
                 long l = player.getWorld().getTime() + (long)200;
                 Timer<MinecraftServer> timer = player.getServer().getSaveProperties().getMainWorldProperties().getScheduledEvents();
                 timer.setEvent("string", l, (server, events, time1) -> {
-                    System.out.println("executed task");
+//                    System.out.println("executed task");
 
                     Direction blockFacee = lastface;
                     int countt = 70;
                     int levell = levelEnch;
 
-                    for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && countt > 0; blockPos = pos.offset(blockFacee)) {
+                    for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && countt > 0; blockPos = blockPos.offset(blockFacee.getOpposite())) {
                         for(int x = -(levell / 2); x <= levell / 2; ++x) {
                             for(int z = -(levell / 2); z <= levell / 2; ++z) {
                                 if (levell % 2 != 0 || Math.abs(x) != levell / 2 || Math.abs(z) != levell / 2) {
@@ -143,7 +144,7 @@ public class XrayEnchantCommand {
                                     if (world.getBlockState(newBlock) != null) {
 
                                         for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
-                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, world.getBlockState(pos)));
+                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, world.getBlockState(newBlock)));
                                         }
 
                                     }
@@ -186,8 +187,8 @@ public class XrayEnchantCommand {
 //                item.setNbt(item.getOrCreateNbt().);
 
                 NbtCompound nbtCompound = item.getOrCreateSubNbt("display");
-                NbtList list = nbtCompound.getList("Lore", 9);
-                list.add(NbtString.of(Text.Serializer.toJson(Text.literal("Xray " + toLore(level)).formatted(Formatting.GRAY))));
+                NbtList list = nbtCompound.getList("Lore", 8);
+                list.add(NbtString.of(Text.Serializer.toJson(Text.literal("Xray " + toLore(level)).formatted(Formatting.RESET,Formatting.GRAY))));
                 nbtCompound.put("Lore", list);
 
 
@@ -202,15 +203,18 @@ public class XrayEnchantCommand {
 
     //TODO: NOT WORKING WHYYYYYY
     private static boolean hasEnchant(ItemStack itemStack) {
-        AtomicBoolean out = new AtomicBoolean(false);
-        for (NbtElement nbtElement : itemStack.getOrCreateSubNbt("display").getList("Lore", 9)) {
-            System.out.println(nbtElement.asString());
+        NbtCompound nbtCompound = itemStack.getOrCreateSubNbt("display");
+//        System.out.println(nbtCompound.asString());
+        NbtList list = nbtCompound.getList("Lore", 8);
+//        System.out.println(list.asString());
+
+        for (NbtElement nbtElement : list) {
+//            System.out.println(nbtElement.asString());
             if (nbtElement.asString().equalsIgnoreCase(Text.Serializer.toJson(Text.literal("Xray " + toLore(5)).formatted(Formatting.GRAY))))
-                out.set(true);
+                return true;
         }
 
-
-        return out.get();
+        return false;
 //        return getEnchantLevel(itemStack.getTooltip(player, TooltipContext.Default.NORMAL)) != -1;
     }
 
@@ -234,89 +238,10 @@ public class XrayEnchantCommand {
 
     private static boolean isTool(Item material) {
         String name = material.getName().getString();
-        System.out.println(name);
+//        System.out.println(name);
         return name.contains("Pickaxe") || name.contains("Axe") || name.contains("Shovel");
     }
 
-    public static int fromRoman(String roman) {
-        byte var3 = -1;
-        switch(roman.hashCode()) {
-            case 73:
-                if (roman.equals("I")) {
-                    var3 = 0;
-                }
-                break;
-            case 86:
-                if (roman.equals("V")) {
-                    var3 = 4;
-                }
-                break;
-            case 88:
-                if (roman.equals("X")) {
-                    var3 = 9;
-                }
-                break;
-            case 2336:
-                if (roman.equals("II")) {
-                    var3 = 1;
-                }
-                break;
-            case 2349:
-                if (roman.equals("IV")) {
-                    var3 = 3;
-                }
-                break;
-            case 2351:
-                if (roman.equals("IX")) {
-                    var3 = 8;
-                }
-                break;
-            case 2739:
-                if (roman.equals("VI")) {
-                    var3 = 5;
-                }
-                break;
-            case 72489:
-                if (roman.equals("III")) {
-                    var3 = 2;
-                }
-                break;
-            case 84982:
-                if (roman.equals("VII")) {
-                    var3 = 6;
-                }
-                break;
-            case 2634515:
-                if (roman.equals("VIII")) {
-                    var3 = 7;
-                }
-        }
-
-        switch(var3) {
-            case 0:
-                return 1;
-            case 1:
-                return 2;
-            case 2:
-                return 3;
-            case 3:
-                return 4;
-            case 4:
-                return 5;
-            case 5:
-                return 6;
-            case 6:
-                return 7;
-            case 7:
-                return 8;
-            case 8:
-                return 9;
-            case 9:
-                return 10;
-            default:
-                return -1;
-        }
-    }
 
     private static String toLore(int level) {
         switch(level) {

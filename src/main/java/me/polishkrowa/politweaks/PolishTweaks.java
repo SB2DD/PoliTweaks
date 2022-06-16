@@ -16,8 +16,7 @@ public class PolishTweaks implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        //TODO:
-        // structure compass, xray enchant, list biomes/missing stuff in achievements command
+        //TODO: structure compass, list biomes/missing stuff in achievements command
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> SwitchDifficultyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> EnchantExtractorCommand.registerCommand(dispatcher)));
