@@ -1,46 +1,38 @@
 package me.polishkrowa.politweaks.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.sound.Sound;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
+import net.minecraft.world.timer.Timer;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class XrayEnchantCommand {
     private static Map<UUID, Direction> lastClicked = new HashMap();
@@ -52,24 +44,27 @@ public class XrayEnchantCommand {
 
         AttackBlockCallback.EVENT.register((PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) -> {
             lastClicked.put(player.getUuid(), direction);
+            System.out.println("1");
             return ActionResult.PASS;
         });
 
-        PlayerBlockBreakEvents.AFTER.register((World world, ServerPlayerEntity player, BlockPos pos, BlockState state, /* Nullable */ BlockEntity blockEntity) -> {
+        PlayerBlockBreakEvents.AFTER.register((World world, PlayerEntity playerEnt, BlockPos pos, BlockState state, /* Nullable */ BlockEntity blockEntity) -> {
+            ServerPlayerEntity player = world.getServer().getPlayerManager().getPlayer(playerEnt.getUuid());
 
             if (hasEnchant(player.getInventory().getMainHandStack(), player) && lastClicked.containsKey(player.getUuid())) {
-
+                System.out.println("2");
                 //damage manager
-                if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
-                    ItemStack damageable = player.getInventory().getMainHandStack();
-                    int maxDurability = player.getInventory().getMainHandStack().getItem().getMaxDamage();
-                    damageable.setDamage((int)((double)damageable.getDamage() + (double)maxDurability * 0.03D));
-                    if (damageable.getDamage() >= maxDurability) {
-                        //break item
-                        player.getInventory().getMainHandStack().setCount(0);
-                        player.getWorld().playSound(player, player.getBlockPos(), SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                    }
-                }
+//                if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+//                    ItemStack damageable = player.getInventory().getMainHandStack();
+//                    int maxDurability = player.getInventory().getMainHandStack().getItem().getMaxDamage();
+//                    damageable.setDamage((int)((double)damageable.getDamage() + (double)maxDurability * 0.03D));
+//                    if (damageable.getDamage() >= maxDurability) {
+//                        //break item
+//                        player.getInventory().getMainHandStack().setCount(0);
+//                        player.getWorld().playSound(player, player.getBlockPos(), SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
+//                    }
+//
+//                }
 
                 //packet sender
                 Direction blockFace = lastClicked.get(player.getUuid());
@@ -101,9 +96,9 @@ public class XrayEnchantCommand {
                                             playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, Blocks.BARRIER.getDefaultState()));
                                         }
                                     } else {
-                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
-                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, type.getDefaultState()));
-                                        }
+//                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
+//                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, type.getDefaultState()));
+//                                        }
                                     }
 
                                 }
@@ -114,54 +109,57 @@ public class XrayEnchantCommand {
                     --count;
                 }
 
-                //TODO update this
-                BlockFace lastface = (BlockFace)lastClicked.get(player.getUniqueId());
-                int levelEnch = getEnchantLevel(player.getInventory().getItemInMainHand());
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        BlockFace blockFace = lastface;
-                        int count = 70;
-                        int level = levelEnch;
 
-                        for(Block block = event.getBlock(); block.getType() != Material.BEDROCK && count > 0; block = block.getRelative(blockFace)) {
-                            for(int x = -(level / 2); x <= level / 2; ++x) {
-                                for(int z = -(level / 2); z <= level / 2; ++z) {
-                                    if (level % 2 != 0 || Math.abs(x) != level / 2 || Math.abs(z) != level / 2) {
-                                        Block newBlock = null;
-                                        if (blockFace != BlockFace.DOWN && blockFace != BlockFace.UP) {
-                                            if (blockFace != BlockFace.EAST && blockFace != BlockFace.WEST) {
-                                                if (blockFace == BlockFace.NORTH || blockFace == BlockFace.SOUTH) {
-                                                    newBlock = block.getRelative(x, z, 0);
-                                                }
-                                            } else {
-                                                newBlock = block.getRelative(0, x, z);
+                Direction lastface = (Direction) lastClicked.get(player.getUuid());
+                int levelEnch = getEnchantLevel(player.getInventory().getMainHandStack().getTooltip(player, TooltipContext.Default.NORMAL));
+
+                long l = player.getWorld().getTime() + (long)200;
+                Timer<MinecraftServer> timer = player.getServer().getSaveProperties().getMainWorldProperties().getScheduledEvents();
+                timer.setEvent("string", l, (server, events, time1) -> {
+                    System.out.println("executed task");
+
+                    Direction blockFacee = lastface;
+                    int countt = 70;
+                    int levell = levelEnch;
+
+                    for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && countt > 0; blockPos = pos.offset(blockFacee)) {
+                        for(int x = -(levell / 2); x <= levell / 2; ++x) {
+                            for(int z = -(levell / 2); z <= levell / 2; ++z) {
+                                if (levell % 2 != 0 || Math.abs(x) != levell / 2 || Math.abs(z) != levell / 2) {
+                                    BlockPos newBlock = null;
+                                    if (blockFacee != Direction.DOWN && blockFacee != Direction.UP) {
+                                        if (blockFacee != Direction.EAST && blockFacee != Direction.WEST) {
+                                            if (blockFacee == Direction.NORTH || blockFacee == Direction.SOUTH) {
+                                                newBlock = blockPos.add(x,z,0);
                                             }
                                         } else {
-                                            newBlock = block.getRelative(x, 0, z);
+                                            newBlock = blockPos.add(0, x, z);
+                                        }
+                                    } else {
+                                        newBlock = blockPos.add(x, 0, z);
+                                    }
+
+
+                                    if (world.getBlockState(newBlock) != null) {
+
+                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
+                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, world.getBlockState(pos)));
                                         }
 
-                                        if (newBlock != null) {
-                                            //Material type = newBlock.getType();
-                                            Iterator var11 = Bukkit.getOnlinePlayers().iterator();
-
-                                            while(var11.hasNext()) {
-                                                Player onlinePlayer = (Player)var11.next();
-                                                onlinePlayer.sendBlockChange(newBlock.getLocation(), newBlock.getBlockData());
-                                            }
-                                        }
                                     }
                                 }
                             }
-
-                            --count;
                         }
 
+                        --countt;
                     }
-                }.runTaskLater(this, 200);
+                });
+
             }
         });
     }
+
+
 
     public static int execute(ServerCommandSource source) {
         ServerPlayerEntity player = source.getPlayer();
@@ -175,14 +173,26 @@ public class XrayEnchantCommand {
 
             item.addHideFlag(ItemStack.TooltipSection.ENCHANTMENTS);
 
-            getEnchantLevel(item.getTooltip(player, TooltipContext.Default.NORMAL));
 
-            if (getEnchantLevel(item.getTooltip(player, TooltipContext.Default.NORMAL)) == -1) {
+            if (hasEnchant(item)) {
                 source.sendError(Text.literal("Item already has Xray enchantment."));
                 return 0;
             } else {
-                item.getTooltip(player, TooltipContext.Default.NORMAL).add(Text.literal(toLore(level).formatted(Formatting.GRAY)));
-                String lore = "Successfully added Xray " + (level > 10 ? level : toLore(level)) + ".";
+//                item.getTooltip(player, TooltipContext.Default.NORMAL).add(Text.literal(toLore(level).formatted(Formatting.GRAY)));
+
+
+//                NbtCompound display = item.getOrCreateNbt().getCompound("display");
+//                display.put("Lore", list);
+//                item.setNbt(item.getOrCreateNbt().);
+
+                NbtCompound nbtCompound = item.getOrCreateSubNbt("display");
+                NbtList list = nbtCompound.getList("Lore", 9);
+                list.add(NbtString.of(Text.Serializer.toJson(Text.literal("Xray " + toLore(level)).formatted(Formatting.GRAY))));
+                nbtCompound.put("Lore", list);
+
+
+
+                String lore = "Successfully added Xray " + toLore(level) + ".";
                 source.sendFeedback(Text.literal(lore).formatted(Formatting.GREEN), false);
             }
         }
@@ -190,31 +200,42 @@ public class XrayEnchantCommand {
         return 0;
     }
 
+    //TODO: NOT WORKING WHYYYYYY
+    private static boolean hasEnchant(ItemStack itemStack) {
+        AtomicBoolean out = new AtomicBoolean(false);
+        for (NbtElement nbtElement : itemStack.getOrCreateSubNbt("display").getList("Lore", 9)) {
+            System.out.println(nbtElement.asString());
+            if (nbtElement.asString().equalsIgnoreCase(Text.Serializer.toJson(Text.literal("Xray " + toLore(5)).formatted(Formatting.GRAY))))
+                out.set(true);
+        }
 
-    @EventHandler
-    public void onBlockBreakEvent(BlockBreakEvent event) {
 
-
+        return out.get();
+//        return getEnchantLevel(itemStack.getTooltip(player, TooltipContext.Default.NORMAL)) != -1;
     }
 
     private static boolean hasEnchant(ItemStack itemStack, PlayerEntity player) {
-        return getEnchantLevel(itemStack.getTooltip(player, TooltipContext.Default.NORMAL)) != -1;
+        return hasEnchant(itemStack);
+//        return getEnchantLevel(itemStack.getTooltip(player, TooltipContext.Default.NORMAL)) != -1;
     }
 
     private static int getEnchantLevel(List<Text> lore) {
-        for (Text text : lore) {
-            if (lore.get(0).equals(text)) return -1;
-            if (text.getString().contains("Xray")) {
-                String split = text.copyContentOnly().toString().split("Xray ")[1].trim();
-                return fromRoman(split);
-            }
-        }
-        return -1;
+        return 5;
+//        for (Text text : lore) {
+//            System.out.println(text.getString());
+//            if (lore.get(0).equals(text)) return -1;
+//            if (text.getString().contains("Xray")) {
+//                String split = text.copyContentOnly().toString().split("Xray ")[1].trim();
+//                return fromRoman(split);
+//            }
+//        }
+//        return -1;
     }
 
     private static boolean isTool(Item material) {
-        String name = material.toString();
-        return name.contains("_PICKAXE") || name.contains("_AXE") || name.contains("_SHOVEL");
+        String name = material.getName().getString();
+        System.out.println(name);
+        return name.contains("Pickaxe") || name.contains("Axe") || name.contains("Shovel");
     }
 
     public static int fromRoman(String roman) {

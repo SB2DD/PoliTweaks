@@ -6,6 +6,7 @@ import me.polishkrowa.politweaks.commands.SwitchDifficultyCommand;
 import me.polishkrowa.politweaks.commands.XrayEnchantCommand;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.util.thread.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,6 @@ public class PolishTweaks implements ModInitializer {
     public void onInitialize() {
         //TODO:
         // structure compass, xray enchant, list biomes/missing stuff in achievements command
-
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> SwitchDifficultyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> EnchantExtractorCommand.registerCommand(dispatcher)));

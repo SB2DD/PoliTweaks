@@ -9,7 +9,6 @@
     "DrownedEntityMixin",
     "GoatBrainMixin",
     "MessageCommandMixin",
-    "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
     "ServerWorldMixin",
     "SlimeEntityMixin",
