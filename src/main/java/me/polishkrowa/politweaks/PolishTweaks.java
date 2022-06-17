@@ -1,9 +1,6 @@
 package me.polishkrowa.politweaks;
 
-import me.polishkrowa.politweaks.commands.EnchantExtractorCommand;
-import me.polishkrowa.politweaks.commands.ReplyCommand;
-import me.polishkrowa.politweaks.commands.SwitchDifficultyCommand;
-import me.polishkrowa.politweaks.commands.XrayEnchantCommand;
+import me.polishkrowa.politweaks.commands.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.util.thread.TaskExecutor;
@@ -21,5 +18,7 @@ public class PolishTweaks implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> EnchantExtractorCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> XrayEnchantCommand.registerCommand(dispatcher)));
+        //Idk how to make a registry filter or whatever...
+//        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> StructureCompassCommand.registerCommand(dispatcher)));
     }
 }

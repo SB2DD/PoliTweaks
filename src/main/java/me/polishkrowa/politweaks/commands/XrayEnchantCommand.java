@@ -169,48 +169,47 @@ public class XrayEnchantCommand {
         ItemStack item = player.getInventory().getMainHandStack();
         if (!isTool(item.getItem())) {
             source.sendError(Text.literal("You must be holding a tool!"));
-        } else {
-            item.addEnchantment(Enchantments.BLAST_PROTECTION, 1);
-
-            item.addHideFlag(ItemStack.TooltipSection.ENCHANTMENTS);
-
-
-            if (hasEnchant(item)) {
+        } else if (hasEnchant(item)) {
                 source.sendError(Text.literal("Item already has Xray enchantment."));
                 return 0;
-            } else {
+        } else {
 //                item.getTooltip(player, TooltipContext.Default.NORMAL).add(Text.literal(toLore(level).formatted(Formatting.GRAY)));
 
 
 //                NbtCompound display = item.getOrCreateNbt().getCompound("display");
 //                display.put("Lore", list);
 //                item.setNbt(item.getOrCreateNbt().);
+                item.addEnchantment(Enchantments.BLAST_PROTECTION, 1);
+
+                item.addHideFlag(ItemStack.TooltipSection.ENCHANTMENTS);
 
                 NbtCompound nbtCompound = item.getOrCreateSubNbt("display");
                 NbtList list = nbtCompound.getList("Lore", 8);
-                list.add(NbtString.of(Text.Serializer.toJson(Text.literal("Xray " + toLore(level)).formatted(Formatting.RESET,Formatting.GRAY))));
+                list.add(NbtString.of(Text.Serializer.toJson(Text.literal("Xray " + toLore(level)).formatted(Formatting.RESET).formatted(Formatting.GRAY))));
                 nbtCompound.put("Lore", list);
 
 
 
                 String lore = "Successfully added Xray " + toLore(level) + ".";
                 source.sendFeedback(Text.literal(lore).formatted(Formatting.GREEN), false);
-            }
+
         }
 
         return 0;
     }
 
-    //TODO: NOT WORKING WHYYYYYY
+
     private static boolean hasEnchant(ItemStack itemStack) {
-        NbtCompound nbtCompound = itemStack.getOrCreateSubNbt("display");
+        NbtCompound nbtCompound = itemStack.getSubNbt("display");
+        if (nbtCompound == null)
+            return false;
 //        System.out.println(nbtCompound.asString());
         NbtList list = nbtCompound.getList("Lore", 8);
 //        System.out.println(list.asString());
 
         for (NbtElement nbtElement : list) {
 //            System.out.println(nbtElement.asString());
-            if (nbtElement.asString().equalsIgnoreCase(Text.Serializer.toJson(Text.literal("Xray " + toLore(5)).formatted(Formatting.GRAY))))
+            if (nbtElement.asString().equalsIgnoreCase(Text.Serializer.toJson(Text.literal("Xray " + toLore(5)).formatted(Formatting.RESET).formatted(Formatting.GRAY))))
                 return true;
         }
 
