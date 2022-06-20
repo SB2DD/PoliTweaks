@@ -9,6 +9,8 @@
     "ClientConnectionAccessor",
     "ClientConnectionMixin",
     "DrownedEntityMixin",
+    "FrogspawnBlockMixin",
+    "FrostWalkerEnchantmentMixin",
     "GoatBrainMixin",
     "HandshakeC2SPacketAccessor",
     "HandshakeC2SPacketMixin",

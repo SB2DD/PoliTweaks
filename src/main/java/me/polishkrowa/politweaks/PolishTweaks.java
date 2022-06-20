@@ -3,7 +3,6 @@ package me.polishkrowa.politweaks;
 import me.polishkrowa.politweaks.commands.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.util.thread.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +17,8 @@ public class PolishTweaks implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> EnchantExtractorCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> XrayEnchantCommand.registerCommand(dispatcher)));
+        //allow frost walker in boats (Not working)
+
         //Idk how to make a registry filter or whatever...
 //        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> StructureCompassCommand.registerCommand(dispatcher)));
     }

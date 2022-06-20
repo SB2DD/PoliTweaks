@@ -45,6 +45,8 @@ public class XrayEnchantCommand {
         AttackBlockCallback.EVENT.register((PlayerEntity player, World world, Hand hand, BlockPos pos, Direction direction) -> {
             lastClicked.put(player.getUuid(), direction);
 //            System.out.println("1");
+            ServerPlayerEntity playere = world.getServer().getPlayerManager().getPlayer(player.getUuid());
+            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(pos, world.getBlockState(pos)));
             return ActionResult.PASS;
         });
 
@@ -92,7 +94,7 @@ public class XrayEnchantCommand {
 
                                 if (world.getBlockState(newBlock) != null) {
                                     Block type = world.getBlockState(newBlock).getBlock();
-                                    if (!type.getName().getString().endsWith("ORE") && type != Blocks.AIR && type != Blocks.LAVA && type != Blocks.WATER && type != Blocks.CHEST && type != Blocks.SPAWNER && type != Blocks.END_PORTAL_FRAME && type != Blocks.BEDROCK && !type.getName().getString().contains("PLANKS") && !type.getName().getString().contains("FRENCE") && type != Blocks.RAIL && type != Blocks.ANCIENT_DEBRIS && type != Blocks.AMETHYST_BLOCK && type != Blocks.BUDDING_AMETHYST && !type.getName().getString().contains("AMETHYST")) {
+                                    if (!type.getName().getString().endsWith("Ore") && type != Blocks.AIR && type != Blocks.LAVA && type != Blocks.WATER && type != Blocks.CHEST && type != Blocks.SPAWNER && type != Blocks.END_PORTAL_FRAME && type != Blocks.BEDROCK && !type.getName().getString().contains("Planks") && !type.getName().getString().contains("Fence") && type != Blocks.RAIL && type != Blocks.ANCIENT_DEBRIS && type != Blocks.AMETHYST_BLOCK && type != Blocks.BUDDING_AMETHYST && !type.getName().getString().contains("Amethyst")) {
                                         for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
                                             playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, Blocks.BARRIER.getDefaultState()));
                                         }
