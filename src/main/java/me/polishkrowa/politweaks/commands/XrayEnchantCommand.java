@@ -202,6 +202,8 @@ public class XrayEnchantCommand {
 
 
     private static boolean hasEnchant(ItemStack itemStack) {
+        if (itemStack == null || itemStack.isEmpty())
+            return false;
         NbtCompound nbtCompound = itemStack.getSubNbt("display");
         if (nbtCompound == null)
             return false;

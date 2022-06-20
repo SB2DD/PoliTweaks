@@ -20,6 +20,7 @@
     "ServerPlayNetworkHandlerMixin",
     "ServerWorldMixin",
     "SlimeEntityMixin",
+    "TadpoleEntityMixin",
     "TurtleEggBlockMixin",
     "VillagerTradesMixin",
     "ZombieVillagerEntityMixin"
