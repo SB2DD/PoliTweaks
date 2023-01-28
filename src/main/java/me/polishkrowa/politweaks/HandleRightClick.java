@@ -35,7 +35,7 @@ public class HandleRightClick {
             player.getInventory().getMainHandStack().setCount(player.getInventory().getMainHandStack().getCount() - 1);
             ItemStack stack = new ItemStack(Items.MILK_BUCKET);
             stack.setCustomName(Text.literal(clickedPlayer.getName().getString() + "'s milk"));
-            player.server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + " milked " + clickedPlayer.getName().getString()).formatted(Formatting.AQUA), MessageType.SYSTEM);
+            player.server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + " milked " + clickedPlayer.getName().getString()).formatted(Formatting.AQUA), false);
 
             clickedPlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200, 10));
 

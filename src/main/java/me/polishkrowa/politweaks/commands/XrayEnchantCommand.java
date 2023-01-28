@@ -50,116 +50,118 @@ public class XrayEnchantCommand {
             return ActionResult.PASS;
         });
 
-        PlayerBlockBreakEvents.AFTER.register((World world, PlayerEntity playerEnt, BlockPos pos, BlockState state, /* Nullable */ BlockEntity blockEntity) -> {
-            ServerPlayerEntity player = world.getServer().getPlayerManager().getPlayer(playerEnt.getUuid());
-
-            if (hasEnchant(player.getInventory().getMainHandStack(), player) && lastClicked.containsKey(player.getUuid())) {
-//                System.out.println("2");
-                //damage manager
-//                if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
-//                    ItemStack damageable = player.getInventory().getMainHandStack();
-//                    int maxDurability = player.getInventory().getMainHandStack().getItem().getMaxDamage();
-//                    damageable.setDamage((int)((double)damageable.getDamage() + (double)maxDurability * 0.03D));
-//                    if (damageable.getDamage() >= maxDurability) {
-//                        //break item
-//                        player.getInventory().getMainHandStack().setCount(0);
-//                        player.getWorld().playSound(player, player.getBlockPos(), SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
+//        PlayerBlockBreakEvents.AFTER.register((World world, PlayerEntity playerEnt, BlockPos pos, BlockState state, /* Nullable */ BlockEntity blockEntity) -> {
+//
+//
+//            ServerPlayerEntity player = world.getServer().getPlayerManager().getPlayer(playerEnt.getUuid());
+//
+//            if (hasEnchant(player.getInventory().getMainHandStack(), player) && lastClicked.containsKey(player.getUuid())) {
+////                System.out.println("2");
+//                //damage manager
+////                if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+////                    ItemStack damageable = player.getInventory().getMainHandStack();
+////                    int maxDurability = player.getInventory().getMainHandStack().getItem().getMaxDamage();
+////                    damageable.setDamage((int)((double)damageable.getDamage() + (double)maxDurability * 0.03D));
+////                    if (damageable.getDamage() >= maxDurability) {
+////                        //break item
+////                        player.getInventory().getMainHandStack().setCount(0);
+////                        player.getWorld().playSound(player, player.getBlockPos(), SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0F, 1.0F);
+////                    }
+////
+////                }
+//
+//                //packet sender
+//                Direction blockFace = lastClicked.get(player.getUuid());
+//                int count = 70;
+//                int level = getEnchantLevel(player.getInventory().getMainHandStack().getTooltip(player, TooltipContext.Default.NORMAL));
+//
+//                for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && count > 0; blockPos = blockPos.offset(blockFace.getOpposite())) {
+//                    for(int x = -(level / 2); x <= level / 2; ++x) {
+//                        for(int z = -(level / 2); z <= level / 2; ++z) {
+//                            if (level % 2 != 0 || Math.abs(x) != level / 2 || Math.abs(z) != level / 2) {
+//                                BlockPos newBlock = null;
+//                                if (blockFace != Direction.DOWN && blockFace != Direction.UP) {
+//                                    if (blockFace != Direction.EAST && blockFace != Direction.WEST) {
+//                                        if (blockFace == Direction.NORTH || blockFace == Direction.SOUTH) {
+//                                            newBlock = blockPos.add(x,z,0);
+//                                        }
+//                                    } else {
+//                                        newBlock = blockPos.add(0, x, z);
+//                                    }
+//                                } else {
+//                                    newBlock = blockPos.add(x, 0, z);
+//                                }
+//
+////                                System.out.println(newBlock.toShortString());
+//
+//                                if (world.getBlockState(newBlock) != null) {
+//                                    Block type = world.getBlockState(newBlock).getBlock();
+//                                    if (!type.getName().getString().endsWith("Ore") && type != Blocks.AIR && type != Blocks.LAVA && type != Blocks.WATER && type != Blocks.CHEST && type != Blocks.SPAWNER && type != Blocks.END_PORTAL_FRAME && type != Blocks.BEDROCK && !type.getName().getString().contains("Planks") && !type.getName().getString().contains("Fence") && type != Blocks.RAIL && type != Blocks.ANCIENT_DEBRIS && type != Blocks.AMETHYST_BLOCK && type != Blocks.BUDDING_AMETHYST && !type.getName().getString().contains("Amethyst")) {
+//                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
+//                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, Blocks.BARRIER.getDefaultState()));
+//                                        }
+//                                    } else {
+////                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
+////                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, type.getDefaultState()));
+////                                        }
+//                                    }
+//
+//                                }
+//                            }
+//                        }
 //                    }
 //
+//                    --count;
 //                }
-
-                //packet sender
-                Direction blockFace = lastClicked.get(player.getUuid());
-                int count = 70;
-                int level = getEnchantLevel(player.getInventory().getMainHandStack().getTooltip(player, TooltipContext.Default.NORMAL));
-
-                for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && count > 0; blockPos = blockPos.offset(blockFace.getOpposite())) {
-                    for(int x = -(level / 2); x <= level / 2; ++x) {
-                        for(int z = -(level / 2); z <= level / 2; ++z) {
-                            if (level % 2 != 0 || Math.abs(x) != level / 2 || Math.abs(z) != level / 2) {
-                                BlockPos newBlock = null;
-                                if (blockFace != Direction.DOWN && blockFace != Direction.UP) {
-                                    if (blockFace != Direction.EAST && blockFace != Direction.WEST) {
-                                        if (blockFace == Direction.NORTH || blockFace == Direction.SOUTH) {
-                                            newBlock = blockPos.add(x,z,0);
-                                        }
-                                    } else {
-                                        newBlock = blockPos.add(0, x, z);
-                                    }
-                                } else {
-                                    newBlock = blockPos.add(x, 0, z);
-                                }
-
-//                                System.out.println(newBlock.toShortString());
-
-                                if (world.getBlockState(newBlock) != null) {
-                                    Block type = world.getBlockState(newBlock).getBlock();
-                                    if (!type.getName().getString().endsWith("Ore") && type != Blocks.AIR && type != Blocks.LAVA && type != Blocks.WATER && type != Blocks.CHEST && type != Blocks.SPAWNER && type != Blocks.END_PORTAL_FRAME && type != Blocks.BEDROCK && !type.getName().getString().contains("Planks") && !type.getName().getString().contains("Fence") && type != Blocks.RAIL && type != Blocks.ANCIENT_DEBRIS && type != Blocks.AMETHYST_BLOCK && type != Blocks.BUDDING_AMETHYST && !type.getName().getString().contains("Amethyst")) {
-                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
-                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, Blocks.BARRIER.getDefaultState()));
-                                        }
-                                    } else {
-//                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
-//                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, type.getDefaultState()));
+//
+//
+//                Direction lastface = (Direction) lastClicked.get(player.getUuid());
+//                int levelEnch = getEnchantLevel(player.getInventory().getMainHandStack().getTooltip(player, TooltipContext.Default.NORMAL));
+//
+//                long l = player.getWorld().getTime() + (long)200;
+//                Timer<MinecraftServer> timer = player.getServer().getSaveProperties().getMainWorldProperties().getScheduledEvents();
+//                timer.setEvent("string", l, (server, events, time1) -> {
+////                    System.out.println("executed task");
+//
+//                    Direction blockFacee = lastface;
+//                    int countt = 70;
+//                    int levell = levelEnch;
+//
+//                    for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && countt > 0; blockPos = blockPos.offset(blockFacee.getOpposite())) {
+//                        for(int x = -(levell / 2); x <= levell / 2; ++x) {
+//                            for(int z = -(levell / 2); z <= levell / 2; ++z) {
+//                                if (levell % 2 != 0 || Math.abs(x) != levell / 2 || Math.abs(z) != levell / 2) {
+//                                    BlockPos newBlock = null;
+//                                    if (blockFacee != Direction.DOWN && blockFacee != Direction.UP) {
+//                                        if (blockFacee != Direction.EAST && blockFacee != Direction.WEST) {
+//                                            if (blockFacee == Direction.NORTH || blockFacee == Direction.SOUTH) {
+//                                                newBlock = blockPos.add(x,z,0);
+//                                            }
+//                                        } else {
+//                                            newBlock = blockPos.add(0, x, z);
 //                                        }
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-
-                    --count;
-                }
-
-
-                Direction lastface = (Direction) lastClicked.get(player.getUuid());
-                int levelEnch = getEnchantLevel(player.getInventory().getMainHandStack().getTooltip(player, TooltipContext.Default.NORMAL));
-
-                long l = player.getWorld().getTime() + (long)200;
-                Timer<MinecraftServer> timer = player.getServer().getSaveProperties().getMainWorldProperties().getScheduledEvents();
-                timer.setEvent("string", l, (server, events, time1) -> {
-//                    System.out.println("executed task");
-
-                    Direction blockFacee = lastface;
-                    int countt = 70;
-                    int levell = levelEnch;
-
-                    for(BlockPos blockPos = pos; world.getBlockState(blockPos).getBlock() != Blocks.BEDROCK && countt > 0; blockPos = blockPos.offset(blockFacee.getOpposite())) {
-                        for(int x = -(levell / 2); x <= levell / 2; ++x) {
-                            for(int z = -(levell / 2); z <= levell / 2; ++z) {
-                                if (levell % 2 != 0 || Math.abs(x) != levell / 2 || Math.abs(z) != levell / 2) {
-                                    BlockPos newBlock = null;
-                                    if (blockFacee != Direction.DOWN && blockFacee != Direction.UP) {
-                                        if (blockFacee != Direction.EAST && blockFacee != Direction.WEST) {
-                                            if (blockFacee == Direction.NORTH || blockFacee == Direction.SOUTH) {
-                                                newBlock = blockPos.add(x,z,0);
-                                            }
-                                        } else {
-                                            newBlock = blockPos.add(0, x, z);
-                                        }
-                                    } else {
-                                        newBlock = blockPos.add(x, 0, z);
-                                    }
-
-
-                                    if (world.getBlockState(newBlock) != null) {
-
-                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
-                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, world.getBlockState(newBlock)));
-                                        }
-
-                                    }
-                                }
-                            }
-                        }
-
-                        --countt;
-                    }
-                });
-
-            }
-        });
+//                                    } else {
+//                                        newBlock = blockPos.add(x, 0, z);
+//                                    }
+//
+//
+//                                    if (world.getBlockState(newBlock) != null) {
+//
+//                                        for (ServerPlayerEntity playere : world.getServer().getPlayerManager().getPlayerList()) {
+//                                            playere.networkHandler.sendPacket(new BlockUpdateS2CPacket(newBlock, world.getBlockState(newBlock)));
+//                                        }
+//
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                        --countt;
+//                    }
+//                });
+//
+//            }
+//        });
     }
 
 
