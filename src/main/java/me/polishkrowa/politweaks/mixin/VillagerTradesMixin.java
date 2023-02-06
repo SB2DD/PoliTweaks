@@ -1,15 +1,25 @@
 package me.polishkrowa.politweaks.mixin;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.EnchantedBookItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.village.TradeOffer;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mixin(targets = "net.minecraft.village.TradeOffers$EnchantBookFactory")
 public class VillagerTradesMixin {
@@ -20,10 +30,36 @@ public class VillagerTradesMixin {
 //    private void injected(Args args) {
 //        Enchantment enchantment = args.get(0);
 //        args.set(1, enchantment.getMaxLevel());
+    @Final
+    @Shadow
+    private final int experience = 0;
 
-    @Redirect(method = "create", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;nextInt(Lnet/minecraft/util/math/random/Random;II)I"))
-    private int injected(Random random, int min, int max) {
-        return max;
+
+    List usedEnchants = new ArrayList<>();
+
+    /**
+     * @author me
+     * @reason Making every enchant loop instead of random
+     */
+    @Overwrite
+    public TradeOffer create(Entity entity, Random random) {
+        if (usedEnchants.isEmpty())
+            usedEnchants = Registry.ENCHANTMENT.stream().filter(Enchantment::isAvailableForEnchantedBookOffer).collect(Collectors.toList());
+        Enchantment enchantment = (Enchantment)usedEnchants.get(random.nextInt(usedEnchants.size()));
+        int i = enchantment.getMaxLevel();
+        ItemStack itemStack = EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(enchantment, i));
+        int j = 2 + random.nextInt(5 + i * 10) + 3 * i;
+        if (enchantment.isTreasure()) {
+            j *= 2;
+        }
+
+        if (j > 64) {
+            j = 64;
+        }
+
+
+        usedEnchants.remove(enchantment);
+        return new TradeOffer(new ItemStack(Items.EMERALD, j), new ItemStack(Items.BOOK), itemStack, 12, this.experience, 0.2F);
     }
 //    }
 
