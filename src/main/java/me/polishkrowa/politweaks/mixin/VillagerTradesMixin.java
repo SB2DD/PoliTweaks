@@ -6,7 +6,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.TradeOffer;
@@ -14,8 +13,6 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +27,13 @@ public class VillagerTradesMixin {
 //    private void injected(Args args) {
 //        Enchantment enchantment = args.get(0);
 //        args.set(1, enchantment.getMaxLevel());
+
     @Final
     @Shadow
-    private final int experience = 0;
+    private int experience;
 
+
+//    @Shadow @Final private int experience;
 
     List usedEnchants = new ArrayList<>();
 
