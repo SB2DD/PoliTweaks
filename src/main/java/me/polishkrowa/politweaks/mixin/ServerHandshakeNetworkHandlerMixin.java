@@ -35,9 +35,15 @@ public class ServerHandshakeNetworkHandlerMixin {
 
     @Inject(method = "onHandshake", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;<init>(Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/network/ClientConnection;)V"))
     private void injected(HandshakeC2SPacket packet, CallbackInfo ci) throws IOException {
+//        System.out.println("0.1");
         if (packet.getIntendedState().equals(NetworkState.LOGIN)) {
+//            System.out.println("1");
             String[] split = ((HandshakeC2SPacketAccessor) packet).getAddress().split("\00");
+//            System.out.println(split.length);
+//            System.out.println(((HandshakeC2SPacketAccessor) packet).getAddress());
+
             if (split.length == 3 || split.length == 4) {
+//                System.out.println("1.5");
                 ((ClientConnectionAccessor) connection).setAddress(new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) connection.getAddress()).getPort()));
                 ((BungeeClientConnection) connection).setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
 
@@ -48,7 +54,7 @@ public class ServerHandshakeNetworkHandlerMixin {
                     Property[] properties = gson.fromJson(split[3], Property[].class);
 
                     Property[] modified = new Property[properties.length - 1];
-
+//                    System.out.println("1.6");
                     int i = 0;
                     boolean found = false;
                     for (Property property : properties) {
@@ -60,8 +66,10 @@ public class ServerHandshakeNetworkHandlerMixin {
                             modified[i++] = property;
                         }
                     }
+//                    System.out.println("2");
                     if (found) {
                         ((BungeeClientConnection) connection).setSpoofedProfile(modified);
+//                        System.out.println("3");
                     } else {
                         Text disconnectMessage = Text.literal("Invalid forwarding info. Please contact Admin.");
                         connection.send(new LoginDisconnectS2CPacket(disconnectMessage));
@@ -73,6 +81,10 @@ public class ServerHandshakeNetworkHandlerMixin {
                     connection.send(new LoginDisconnectS2CPacket(disconnectMessage));
                     connection.disconnect(disconnectMessage);
                 }
+            } else {
+                Text disconnectMessage = Text.literal("You are not from a valid proxy!");
+                connection.send(new LoginDisconnectS2CPacket(disconnectMessage));
+                connection.disconnect(disconnectMessage);
             }
         }
     }

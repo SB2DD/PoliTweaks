@@ -4,26 +4,13 @@
   "package": "me.polishkrowa.politweaks.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "BlocksMixin",
-    "CauldronBlockMixin",
     "ClientConnectionAccessor",
     "ClientConnectionMixin",
-    "DrownedEntityMixin",
-    "FrogspawnBlockMixin",
-    "FrostWalkerEnchantmentMixin",
-    "GoatBrainMixin",
     "HandshakeC2SPacketAccessor",
     "HandshakeC2SPacketMixin",
-    "MessageCommandMixin",
+    "PlayerManagerMixin",
     "ServerHandshakeNetworkHandlerMixin",
-    "ServerLoginNetworkHandlerMixin",
-    "ServerPlayNetworkHandlerMixin",
-    "ServerWorldMixin",
-    "SlimeEntityMixin",
-    "TadpoleEntityMixin",
-    "TurtleEggBlockMixin",
-    "VillagerTradesMixin",
-    "ZombieVillagerEntityMixin"
+    "ServerLoginNetworkHandlerMixin"
   ],
   "client": [
   ],
