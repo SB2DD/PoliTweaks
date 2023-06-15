@@ -6,8 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.TradeOffer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,7 +44,7 @@ public class VillagerTradesMixin {
     @Overwrite
     public TradeOffer create(Entity entity, Random random) {
         if (usedEnchants.isEmpty())
-            usedEnchants = Registry.ENCHANTMENT.stream().filter(Enchantment::isAvailableForEnchantedBookOffer).collect(Collectors.toList());
+            usedEnchants = Registries.ENCHANTMENT.stream().filter(Enchantment::isAvailableForEnchantedBookOffer).collect(Collectors.toList());
         Enchantment enchantment = (Enchantment)usedEnchants.get(random.nextInt(usedEnchants.size()));
         int i = enchantment.getMaxLevel();
         ItemStack itemStack = EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(enchantment, i));

@@ -195,7 +195,7 @@ public class XrayEnchantCommand {
 
 
                 String lore = "Successfully added Xray " + toLore(level) + ".";
-                source.sendFeedback(Text.literal(lore).formatted(Formatting.GREEN), false);
+                source.sendMessage(Text.literal(lore).formatted(Formatting.GREEN));
 
         }
 

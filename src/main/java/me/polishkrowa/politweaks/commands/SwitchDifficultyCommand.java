@@ -29,7 +29,7 @@ public class SwitchDifficultyCommand {
         literalArgumentBuilder
                 .executes((context) -> {
             Difficulty d = context.getSource().getPlayer().getWorld().getDifficulty();
-            context.getSource().sendFeedback(Text.literal("The difficulty is currently " + d.getName()), false);
+            context.getSource().sendMessage(Text.literal("The difficulty is currently " + d.getName()));
             return d.getId();
         });
 
@@ -40,7 +40,7 @@ public class SwitchDifficultyCommand {
 
     private static int execute(ServerCommandSource source, Difficulty difficulty) {
         source.getServer().setDifficulty(difficulty, false);
-        source.sendFeedback(Text.literal("The difficulty is now " + difficulty.getName()), false);
+        source.sendMessage(Text.literal("The difficulty is now " + difficulty.getName()));
         return 0;
     }
 

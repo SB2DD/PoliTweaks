@@ -10,14 +10,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class EnchantExtractorCommand {
 //            System.out.println(com.getInt("lvl"));
 
 
-            EnchantedBookItem.addEnchantment(book, new EnchantmentLevelEntry(Registry.ENCHANTMENT.get(Identifier.tryParse(com.getString("id"))), com.getInt("lvl")));
+            EnchantedBookItem.addEnchantment(book, new EnchantmentLevelEntry(Registries.ENCHANTMENT.get(Identifier.tryParse(com.getString("id"))), com.getInt("lvl")));
 
             e.add(id);
         }
@@ -90,7 +89,7 @@ public class EnchantExtractorCommand {
             }
         }
 
-        source.sendFeedback(Text.literal("Enchantments extracted !").formatted(Formatting.GREEN), false);
+        source.sendMessage(Text.literal("Enchantments extracted !").formatted(Formatting.GREEN));
         return 1;
     }
 
