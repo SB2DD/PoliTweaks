@@ -2,21 +2,17 @@ package me.polishkrowa.politweaks.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
-import net.minecraft.enchantment.EnchantmentTarget;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,9 +50,8 @@ public class EnchantExtractorCommand {
             source.sendError(Text.literal("The item in your mainhand needs enchantments !"));
             return 0;
         }
-        List<NbtElement> e = new ArrayList<>();
-        for (NbtElement id : mainItem.getEnchantments()) {
-            NbtCompound com = (NbtCompound) id;
+        List<RegistryEntry<Enchantment>> e = new ArrayList<>();
+        for (RegistryEntry<Enchantment> enchant: mainItem.getEnchantments().getEnchantments() ) {
 //            System.out.println(id);
 //            System.out.println(com);
 //            System.out.println(com.getString("id"));
@@ -65,12 +60,13 @@ public class EnchantExtractorCommand {
 //            System.out.println(com.getInt("lvl"));
 
 
-            EnchantedBookItem.addEnchantment(book, new EnchantmentLevelEntry(Registries.ENCHANTMENT.get(Identifier.tryParse(com.getString("id"))), com.getInt("lvl")));
+            book.addEnchantment(enchant, mainItem.getEnchantments().getLevel(enchant));
 
-            e.add(id);
+            e.add(enchant);
         }
-        for (NbtElement nbtElement : e) {
-            mainItem.getEnchantments().remove(nbtElement);
+
+        for (RegistryEntry<Enchantment> enchant : e) {
+            EnchantmentHelper.apply(mainItem, (builder) -> builder.remove( en ->  {    return true; } ));
         }
 
         if (isOneBook) {

@@ -20,11 +20,12 @@ public abstract class ServerLoginNetworkHandlerMixin {
     private boolean bypassProxyBungee = false;
     @Shadow
     @Final
-    public ClientConnection connection;
-    @Shadow
-    GameProfile profile;
+    ClientConnection connection;
 
-    @Inject(method = "onHello", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;profile:Lcom/mojang/authlib/GameProfile;", shift = At.Shift.AFTER))
+    @Shadow
+    private GameProfile profile;
+
+    @Inject(method = "startVerify", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;profile:Lcom/mojang/authlib/GameProfile;", shift = At.Shift.AFTER))
     private void initUuid(CallbackInfo ci) {
             if (((BungeeClientConnection) connection).getSpoofedUUID() == null) {
                 bypassProxyBungee = true;
@@ -35,7 +36,7 @@ public abstract class ServerLoginNetworkHandlerMixin {
 
             if (((BungeeClientConnection) connection).getSpoofedProfile() != null) {
                 for (Property property : ((BungeeClientConnection) connection).getSpoofedProfile()) {
-                    this.profile.getProperties().put(property.getName(), property);
+                    this.profile.getProperties().put(property.name(), property);
                 }
             }
 

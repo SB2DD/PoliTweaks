@@ -1,5 +1,6 @@
 package me.polishkrowa.politweaks;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -34,7 +35,7 @@ public class HandleRightClick {
         if (clickedEntity instanceof PlayerEntity clickedPlayer && player.getInventory().getMainHandStack().getItem().equals(Items.BUCKET)) {
             player.getInventory().getMainHandStack().setCount(player.getInventory().getMainHandStack().getCount() - 1);
             ItemStack stack = new ItemStack(Items.MILK_BUCKET);
-            stack.setCustomName(Text.literal(clickedPlayer.getName().getString() + "'s milk"));
+            stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(clickedPlayer.getName().getString() + "'s milk"));
             player.server.getPlayerManager().broadcast(Text.literal(player.getName().getString() + " milked " + clickedPlayer.getName().getString()).formatted(Formatting.AQUA), false);
 
             clickedPlayer.addStatusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200, 10));

@@ -9,11 +9,9 @@ import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import javax.annotation.Signed;
 import java.util.*;
 
 public class ReplyCommand {
@@ -35,7 +33,7 @@ public class ReplyCommand {
 
 
         ServerPlayerEntity serverPlayerEntity = lastMessaged.get(source.getPlayer());
-        source.sendMessage(Text.literal("You replied to ").append(serverPlayerEntity.getDisplayName()).append(Text.literal(": ")).append(sentMessage.getContent()).formatted(Formatting.GRAY, Formatting.ITALIC));
+        source.sendMessage(Text.literal("You replied to ").append(serverPlayerEntity.getDisplayName()).append(Text.literal(": ")).append(sentMessage.content()).formatted(Formatting.GRAY, Formatting.ITALIC));
 
         MessageType.Parameters parameters = MessageType.params(MessageType.MSG_COMMAND_INCOMING, source);
         boolean bl3 = source.shouldFilterText(serverPlayerEntity);

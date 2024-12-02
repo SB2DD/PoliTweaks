@@ -23,7 +23,7 @@ import java.util.Iterator;
 @Mixin(targets = "net.minecraft.server.command.MessageCommand")
 public class MessageCommandMixin {
 
-    @Inject(method = "Lnet/minecraft/server/command/MessageCommand;execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/network/message/SignedMessage;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;sendChatMessage(Lnet/minecraft/network/message/SentMessage;ZLnet/minecraft/network/message/MessageType$Parameters;)V"),locals = LocalCapture.CAPTURE_FAILSOFT)
+    @Inject(method = "execute(Lnet/minecraft/server/command/ServerCommandSource;Ljava/util/Collection;Lnet/minecraft/network/message/SignedMessage;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;sendChatMessage(Lnet/minecraft/network/message/SentMessage;ZLnet/minecraft/network/message/MessageType$Parameters;)V"),locals = LocalCapture.CAPTURE_FAILSOFT)
     private static void injected(ServerCommandSource source, Collection<ServerPlayerEntity> targets, SignedMessage message, CallbackInfo ci, MessageType.Parameters parameters, SentMessage sentMessage, boolean bl, Iterator var6, ServerPlayerEntity serverPlayerEntity, MessageType.Parameters parameters2, boolean bl2) {
         ReplyCommand.setLastMessaged(serverPlayerEntity, source.getPlayer());
         ReplyCommand.setLastMessaged(source.getPlayer(), serverPlayerEntity);

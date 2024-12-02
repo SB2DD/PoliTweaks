@@ -16,7 +16,7 @@ public class PolishTweaks implements ModInitializer {
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> SwitchDifficultyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> ReplyCommand.registerCommand(dispatcher)));
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> EnchantExtractorCommand.registerCommand(dispatcher)));
-        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> XrayEnchantCommand.registerCommand(dispatcher)));
+//        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> XrayEnchantCommand.registerCommand(dispatcher)));
         //allow frost walker in boats (Not working)
 
         //Idk how to make a registry filter or whatever...

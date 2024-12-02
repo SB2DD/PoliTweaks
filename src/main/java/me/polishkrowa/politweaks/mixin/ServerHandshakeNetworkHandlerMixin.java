@@ -6,6 +6,7 @@ import com.mojang.util.UUIDTypeAdapter;
 import me.polishkrowa.politweaks.whatever.BungeeClientConnection;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
+import net.minecraft.network.packet.c2s.handshake.ConnectionIntent;
 import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
 import net.minecraft.server.network.ServerHandshakeNetworkHandler;
@@ -21,6 +22,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.UUID;
 
 @Mixin(ServerHandshakeNetworkHandler.class)
 public class ServerHandshakeNetworkHandlerMixin {
@@ -33,13 +35,14 @@ public class ServerHandshakeNetworkHandlerMixin {
 
     private static String[] seecret = null;
 
-    @Inject(method = "onHandshake", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;<init>(Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/network/ClientConnection;)V"))
-    private void injected(HandshakeC2SPacket packet, CallbackInfo ci) throws IOException {
-        if (packet.getIntendedState().equals(NetworkState.LOGIN)) {
-            String[] split = ((HandshakeC2SPacketAccessor) packet).getAddress().split("\00");
+    @Inject(method = "login", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;<init>(Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/network/ClientConnection;Z)V"))
+    private void injected(HandshakeC2SPacket packet, boolean transfer, CallbackInfo ci) throws IOException {
+        if (packet.intendedState().equals(ConnectionIntent.LOGIN)) {
+            String[] split = packet.address().split("\00");
+
             if (split.length == 3 || split.length == 4) {
                 ((ClientConnectionAccessor) connection).setAddress(new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) connection.getAddress()).getPort()));
-                ((BungeeClientConnection) connection).setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
+                ((BungeeClientConnection) connection).setSpoofedUUID(fromString(split[2]));
 
                 if (getSeecret().length == 0) {
                     ((BungeeClientConnection) connection).setSpoofedProfile(gson.fromJson(split[3], Property[].class));
@@ -52,8 +55,8 @@ public class ServerHandshakeNetworkHandlerMixin {
                     int i = 0;
                     boolean found = false;
                     for (Property property : properties) {
-                        if ("bungeeguard-token".equals(property.getName())) {
-                            if (!(found = !found && Arrays.binarySearch(seecret, property.getValue()) >= 0)) {
+                        if ("bungeeguard-token".equals(property.name())) {
+                            if (!(found = !found && Arrays.binarySearch(seecret, property.value()) >= 0)) {
                                 break;
                             }
                         } else if (i != modified.length) {
@@ -73,6 +76,10 @@ public class ServerHandshakeNetworkHandlerMixin {
                     connection.send(new LoginDisconnectS2CPacket(disconnectMessage));
                     connection.disconnect(disconnectMessage);
                 }
+            } else {
+                Text disconnectMessage = Text.literal("You need to go through proxy.");
+                connection.send(new LoginDisconnectS2CPacket(disconnectMessage));
+                connection.disconnect(disconnectMessage);
             }
         }
     }
@@ -103,6 +110,10 @@ public class ServerHandshakeNetworkHandlerMixin {
             }
         }
         return seecret;
+    }
+
+    private static UUID fromString(final String input) {
+        return UUID.fromString(input.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
     }
 
 }
